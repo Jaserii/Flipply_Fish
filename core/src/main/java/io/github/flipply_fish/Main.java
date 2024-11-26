@@ -21,13 +21,17 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private FitViewport viewport;
 
+
     //  Game resource filenames
     private String playerTextureFile = "libgdx.png";
 
+    
     //  Other game variables
     private float touchCooldown = 0.0f;
     private boolean canControl = true;
     private float jumpInertia = 0.0f;
+    private int worldWidth = 3;
+    private int worldHeight = 6;
 
     @Override
     public void create() {
@@ -36,7 +40,7 @@ public class Main extends ApplicationAdapter {
         player.setSize(1,1);
 
         batch = new SpriteBatch();
-        viewport = new FitViewport(3, 6);
+        viewport = new FitViewport(worldWidth, worldHeight);
     }
 
     /**
@@ -59,31 +63,44 @@ public class Main extends ApplicationAdapter {
     }
 
     private void input() {
-        float speed = 12f;
-        float gravity = 5f;
+        float speed = 15f;
+        float gravity = 7f;
         float delta = Gdx.graphics.getDeltaTime();
 
+        //  Let player bounce up if they touched the screen and the cooldown is not in effect
         if (Gdx.input.isTouched() && canControl){
             jumpInertia = speed * delta;
             player.translateY(jumpInertia);
-            touchCooldown = 0.25f;
+            touchCooldown = 0.25f;  // Start cooldown
             canControl = false;
         }
+        //  Keep bouncing up from the last bounce but with less and less force
         else if (jumpInertia >= 0.0f) {
             jumpInertia -= delta;
             player.translateY(jumpInertia);
         }
+        //  Let gravity kick in after awhile
         else {
+            jumpInertia = 0;
             player.translateY(gravity * delta * (-1));
-            if (player.getY() < 0) player.setY(0.0f);
         }
-
-        touchCooldown -= delta;
-        if (touchCooldown <= 0) canControl = true;
     }
 
     private void logic() {
+        float delta = Gdx.graphics.getDeltaTime();
 
+        //  Add delay in tapping so the player doesn't just immediately fly upwards
+        touchCooldown -= delta;
+        if (touchCooldown <= 0) canControl = true;
+
+        //  Handle collision with "ceiling" and floor
+        if (player.getY() > worldHeight) {
+            player.setY(worldHeight-1);
+            jumpInertia = 0;
+        }
+        if (player.getY() < 0) {
+            player.setY(0.0f);
+        }
     }
 
     private void draw() {
@@ -93,9 +110,7 @@ public class Main extends ApplicationAdapter {
 
         //  Draw sprites within this block
         batch.begin();
-
         player.draw(batch);
-
         batch.end();
     }
 
