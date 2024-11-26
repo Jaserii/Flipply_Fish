@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -14,7 +15,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class Main extends ApplicationAdapter {
 
     //  Game Resources
-    private Texture player;
+    private Texture playerTexture;
+    private Sprite player;
     private Sound bounce;
     private SpriteBatch batch;
     private FitViewport viewport;
@@ -22,9 +24,17 @@ public class Main extends ApplicationAdapter {
     //  Game resource filenames
     private String playerTextureFile = "libgdx.png";
 
+    //  Other game variables
+    private float touchCooldown = 0.0f;
+    private boolean canControl = true;
+    private float jumpInertia = 0.0f;
+
     @Override
     public void create() {
-        player = new Texture(playerTextureFile);
+        playerTexture = new Texture(playerTextureFile);
+        player = new Sprite(playerTexture);
+        player.setSize(1,1);
+
         batch = new SpriteBatch();
         viewport = new FitViewport(3, 6);
     }
@@ -49,7 +59,27 @@ public class Main extends ApplicationAdapter {
     }
 
     private void input() {
+        float speed = 12f;
+        float gravity = 5f;
+        float delta = Gdx.graphics.getDeltaTime();
 
+        if (Gdx.input.isTouched() && canControl){
+            jumpInertia = speed * delta;
+            player.translateY(jumpInertia);
+            touchCooldown = 0.25f;
+            canControl = false;
+        }
+        else if (jumpInertia >= 0.0f) {
+            jumpInertia -= delta;
+            player.translateY(jumpInertia);
+        }
+        else {
+            player.translateY(gravity * delta * (-1));
+            if (player.getY() < 0) player.setY(0.0f);
+        }
+
+        touchCooldown -= delta;
+        if (touchCooldown <= 0) canControl = true;
     }
 
     private void logic() {
@@ -64,7 +94,7 @@ public class Main extends ApplicationAdapter {
         //  Draw sprites within this block
         batch.begin();
 
-        batch.draw(player, 0, 0, 1, 1); // draw the bucket with width/height of 1 meter
+        player.draw(batch);
 
         batch.end();
     }
