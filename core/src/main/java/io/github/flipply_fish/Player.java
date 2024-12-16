@@ -34,6 +34,17 @@ public class Player {
     }
 
     /**
+     * Main.gameStart is initially false. If it wasn't, the player would immediately
+     * fall to their death. This method sets it to true once the player interacts
+     * with the screen once.
+     * @return True if the screen is tapped
+     */
+    public boolean startGame(boolean gameStart){
+        if (gameStart) return true;         // If the game already started, always return true
+        else return Gdx.input.isTouched();
+    }
+
+    /**
      * Every time Render() calls, this method updates the Player's position based on
      * if they are interacting with the screen or not, and if the Player collided
      * with the world

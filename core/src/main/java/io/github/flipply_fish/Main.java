@@ -20,6 +20,7 @@ public class Main extends ApplicationAdapter {
     private FitViewport viewport;
     private Player player;
     private boolean gameOver;
+    private boolean gameStart;
 
 
     @Override
@@ -28,6 +29,7 @@ public class Main extends ApplicationAdapter {
         batch = new SpriteBatch();
         viewport = new FitViewport(Settings.worldWidth, Settings.worldHeight);
         gameOver = false;
+        gameStart = false;  //  Becomes true once player taps the screen
     }
 
     /**
@@ -43,11 +45,14 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        //  Run main game loop if player has not died
-        if (!gameOver){
+        //  Wait for player input before starting
+        drawScreen();
+        gameStart = player.startGame(gameStart);
+
+        //  Run main game loop if player has not died and player started the game
+        if (!gameOver && gameStart){
             player.updatePos();
             if (player.hasDied()) gameOver = true;
-            drawScreen();
         }
     }
 
