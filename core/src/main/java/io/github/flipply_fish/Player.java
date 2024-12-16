@@ -71,9 +71,8 @@ public class Player {
         if (touchCooldown <= 0) canControl = true;
 
         //  Handle collision with "ceiling" and floor
-        if (player.getY() > Settings.worldHeight) {
-            player.setY(Settings.worldHeight-1);
-            jumpInertia = 0;
+        if (player.getY() > Settings.worldHeight+1.5f) {
+            player.setY(Settings.worldHeight-0.5f);
         }
         if (player.getY() < 0) {
             player.setY(0.0f);

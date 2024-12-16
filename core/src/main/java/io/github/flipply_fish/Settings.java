@@ -4,5 +4,6 @@ public class Settings {
     public static int worldWidth = 3;
     public static int worldHeight = 6;
     public static String playerSpriteFilePath = "libgdx.png";
-    public static String menuSkinFilePath = "StartBtn.json";
+    public static String startBtnSkinFilePath = "StartBtn.json";
+    public static String retryBtnSkinFilePath = "RetryBtn.json";
 }

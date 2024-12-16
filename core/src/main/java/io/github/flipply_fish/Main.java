@@ -19,6 +19,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.Window;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Logger;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -33,8 +34,9 @@ public class Main extends ApplicationAdapter {
     private boolean gameOver;
     private boolean gameStart;
     private Stage stage;
-    private Skin menuSkin;
-    private Table popup;
+    private Table table;
+    private Skin startBtnSkin, retryBtnSkin;
+    private Button startBtn, retryBtn;
     private Camera camera;
 
 
@@ -43,28 +45,31 @@ public class Main extends ApplicationAdapter {
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
         viewport = new FitViewport(Settings.worldWidth, Settings.worldHeight, camera);
-        gameOver = false;
-        gameStart = false;  //  Becomes true once player taps the screen
-        player = new Player(Settings.playerSpriteFilePath);
 
         //  Set stage for UI popups when needed
         stage  = new Stage(viewport);
-        menuSkin = new Skin(Gdx.files.internal(Settings.menuSkinFilePath));
-
-        Table table = new Table();
+        startBtnSkin = new Skin(Gdx.files.internal(Settings.startBtnSkinFilePath));
+        retryBtnSkin = new Skin(Gdx.files.internal(Settings.retryBtnSkinFilePath));
+        table = new Table();
         table.setFillParent(true);
         stage.addActor(table);
-
-        Button button = new Button(menuSkin);
-        table.add(button).center().width(3).height(3);
-        // Set the stage as input processor
         Gdx.input.setInputProcessor(stage);
+
+        //  Create reuseable Start adn Retry buttons
+        startBtn = new Button(startBtnSkin);
+        retryBtn = new Button(retryBtnSkin);
+
+        //  Reset game
+        resetGame();
 
         stage.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Remove the popup when the user clicks anywhere
-                button.remove();
+               if (gameStart && !gameOver) table.clearChildren();
+               else if (gameOver) {
+                   table.clearChildren();
+                   resetGame();
+               }
             }
         });
     }
@@ -89,7 +94,11 @@ public class Main extends ApplicationAdapter {
         //  Run main game loop if player has not died and player started the game
         if (!gameOver && gameStart){
             player.updatePos();
-            if (player.hasDied()) gameOver = true;
+            if (player.hasDied()) {
+                gameOver = true;
+                gameStart = false;
+                table.add(retryBtn).center().width(3).height(3);
+            }
         }
     }
 
@@ -107,5 +116,13 @@ public class Main extends ApplicationAdapter {
         // Update and draw the stage
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+    }
+
+    private void resetGame() {
+        table.add(startBtn).center().width(3).height(3);
+        gameOver = false;
+        gameStart = false;  //  Becomes true once player taps the screen
+        player = new Player(Settings.playerSpriteFilePath);
+        Gdx.app.log("MyTag", "my informative message");
     }
 }
