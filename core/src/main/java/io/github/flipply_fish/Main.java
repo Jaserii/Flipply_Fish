@@ -15,30 +15,28 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class Main extends ApplicationAdapter {
 
     //  Game Resources
-    private Texture playerTexture;
-    private Sprite player;
+    //private Texture playerTexture;
+    //private Sprite player;
     private Sound bounce;
     private SpriteBatch batch;
     private FitViewport viewport;
+    private Player player;
 
 
     //  Game resource filenames
-    private String playerTextureFile = "libgdx.png";
+    private String playerSpriteFilePath = "libgdx.png";
 
 
     //  Other game variables
     private float touchCooldown = 0.0f;
     private boolean canControl = true;
     private float jumpInertia = 0.0f;
-    private int worldWidth = 3;
-    private int worldHeight = 6;
+    public static int worldWidth = 3;
+    public static int worldHeight = 6;
 
     @Override
     public void create() {
-        playerTexture = new Texture(playerTextureFile);
-        player = new Sprite(playerTexture);
-        player.setSize(1,1);
-
+        player = new Player(playerSpriteFilePath);
         batch = new SpriteBatch();
         viewport = new FitViewport(worldWidth, worldHeight);
     }
@@ -57,44 +55,8 @@ public class Main extends ApplicationAdapter {
     @Override
     public void render() {
         // organize code into three methods
-        input();
-        logic();
+        player.updatePos();
         draw();
-    }
-
-    private void input() {
-        float speed = 15f;
-        float delta = Gdx.graphics.getDeltaTime();
-
-        //  Let player bounce up if they touched the screen and the cooldown is not in effect
-        if (Gdx.input.isTouched() && canControl){
-            jumpInertia = speed * delta;
-            player.translateY(jumpInertia);
-            touchCooldown = 0.25f;  // Start cooldown
-            canControl = false;
-        }
-        //  Keep bouncing up from the last bounce but with less and less force
-        else {
-            jumpInertia -= delta;
-            player.translateY(jumpInertia);
-        }
-    }
-
-    private void logic() {
-        float delta = Gdx.graphics.getDeltaTime();
-
-        //  Add delay in tapping so the player doesn't just immediately fly upwards
-        touchCooldown -= delta;
-        if (touchCooldown <= 0) canControl = true;
-
-        //  Handle collision with "ceiling" and floor
-        if (player.getY() > worldHeight) {
-            player.setY(worldHeight-1);
-            jumpInertia = 0;
-        }
-        if (player.getY() < 0) {
-            player.setY(0.0f);
-        }
     }
 
     private void draw() {
