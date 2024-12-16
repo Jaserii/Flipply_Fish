@@ -3,11 +3,22 @@ package io.github.flipply_fish;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -21,15 +32,41 @@ public class Main extends ApplicationAdapter {
     private Player player;
     private boolean gameOver;
     private boolean gameStart;
+    private Stage stage;
+    private Skin menuSkin;
+    private Table popup;
+    private Camera camera;
 
 
     @Override
     public void create() {
-        player = new Player(Settings.playerSpriteFilePath);
         batch = new SpriteBatch();
-        viewport = new FitViewport(Settings.worldWidth, Settings.worldHeight);
+        camera = new OrthographicCamera();
+        viewport = new FitViewport(Settings.worldWidth, Settings.worldHeight, camera);
         gameOver = false;
         gameStart = false;  //  Becomes true once player taps the screen
+        player = new Player(Settings.playerSpriteFilePath);
+
+        //  Set stage for UI popups when needed
+        stage  = new Stage(viewport);
+        menuSkin = new Skin(Gdx.files.internal(Settings.menuSkinFilePath));
+
+        Table table = new Table();
+        table.setFillParent(true);
+        stage.addActor(table);
+
+        Button button = new Button(menuSkin);
+        table.add(button).center().width(3).height(3);
+        // Set the stage as input processor
+        Gdx.input.setInputProcessor(stage);
+
+        stage.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // Remove the popup when the user clicks anywhere
+                button.remove();
+            }
+        });
     }
 
     /**
@@ -58,6 +95,7 @@ public class Main extends ApplicationAdapter {
 
     private void drawScreen() {
         ScreenUtils.clear(Color.BLACK);
+        //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
@@ -65,5 +103,9 @@ public class Main extends ApplicationAdapter {
         batch.begin();
         player.draw(batch);
         batch.end();
+
+        // Update and draw the stage
+        stage.act(Gdx.graphics.getDeltaTime());
+        stage.draw();
     }
 }
