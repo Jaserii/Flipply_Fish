@@ -1,7 +1,5 @@
 package io.github.flipply_fish;
 
-import static io.github.flipply_fish.Main.worldHeight;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -17,7 +15,7 @@ public class Player {
     public Player(String playerSpriteFilePath) {
         playerTexture = new Texture(playerSpriteFilePath);
         player = new Sprite(playerTexture);
-        player.setSize(1,1);
+        player.setSize(0.5f,0.5f);
     }
 
     public void draw(SpriteBatch batch){
@@ -46,8 +44,8 @@ public class Player {
         if (touchCooldown <= 0) canControl = true;
 
         //  Handle collision with "ceiling" and floor
-        if (player.getY() > worldHeight) {
-            player.setY(worldHeight-1);
+        if (player.getY() > Settings.worldHeight) {
+            player.setY(Settings.worldHeight-1);
             jumpInertia = 0;
         }
         if (player.getY() < 0) {
