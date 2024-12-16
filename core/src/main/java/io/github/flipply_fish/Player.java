@@ -22,6 +22,7 @@ public class Player {
         player = new Sprite(playerTexture);
         player.setSize(0.5f,0.5f);
         player.setY(Settings.worldHeight / 2f); // Sets starting height to middle of screen
+        player.setX(0.5f);
         hasDied = false;
     }
 

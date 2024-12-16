@@ -38,13 +38,15 @@ public class Main extends ApplicationAdapter {
     private Skin startBtnSkin, retryBtnSkin;
     private Button startBtn, retryBtn;
     private Camera camera;
+    private Texture background1, background2;
+    private float backgroundVelocity;
+    private float backgroundX;
 
 
     @Override
     public void create() {
         batch = new SpriteBatch();
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(Settings.worldWidth, Settings.worldHeight, camera);
+        viewport = new FitViewport(Settings.worldWidth, Settings.worldHeight);
 
         //  Set stage for UI popups when needed
         stage  = new Stage(viewport);
@@ -54,6 +56,17 @@ public class Main extends ApplicationAdapter {
         table.setFillParent(true);
         stage.addActor(table);
         Gdx.input.setInputProcessor(stage);
+        //  Add listener on stage
+        stage.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (gameStart && !gameOver) table.clearChildren();
+                else if (gameOver) {
+                    table.clearChildren();
+                    resetGame();
+                }
+            }
+        });
 
         //  Create reuseable Start adn Retry buttons
         startBtn = new Button(startBtnSkin);
@@ -62,16 +75,10 @@ public class Main extends ApplicationAdapter {
         //  Reset game
         resetGame();
 
-        stage.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-               if (gameStart && !gameOver) table.clearChildren();
-               else if (gameOver) {
-                   table.clearChildren();
-                   resetGame();
-               }
-            }
-        });
+        //  Setup infinitely moving background
+        background1 = new Texture(Settings.backgroundFilePath);
+        background2 = new Texture(Settings.backgroundFilePath);
+
     }
 
     /**
@@ -98,24 +105,31 @@ public class Main extends ApplicationAdapter {
                 gameOver = true;
                 gameStart = false;
                 table.add(retryBtn).center().width(3).height(3);
+                backgroundX = backgroundVelocity = 0;
             }
         }
     }
 
     private void drawScreen() {
         ScreenUtils.clear(Color.BLACK);
-        //Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
 
-        //  Draw sprites within this block
+        //  Draw sprites and background within this block
         batch.begin();
+        batch.draw(background1, backgroundX, 0, Settings.worldWidth, Settings.worldHeight);
+        batch.draw(background2, backgroundX + Settings.worldWidth, 0, Settings.worldWidth, Settings.worldHeight);
         player.draw(batch);
         batch.end();
 
         // Update and draw the stage
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
+
+        backgroundX -= backgroundVelocity;
+        if ((backgroundX + Settings.worldWidth) <= 0) {
+            backgroundX = 0;
+        }
     }
 
     private void resetGame() {
@@ -124,5 +138,9 @@ public class Main extends ApplicationAdapter {
         gameStart = false;  //  Becomes true once player taps the screen
         player = new Player(Settings.playerSpriteFilePath);
         Gdx.app.log("MyTag", "my informative message");
+
+        //  Setup infinitely moving background
+        backgroundX = 0;
+        backgroundVelocity = 0.05f;
     }
 }
