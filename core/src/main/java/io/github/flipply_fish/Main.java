@@ -19,6 +19,7 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private FitViewport viewport;
     private Player player;
+    private boolean gameOver;
 
 
     @Override
@@ -26,6 +27,7 @@ public class Main extends ApplicationAdapter {
         player = new Player(Settings.playerSpriteFilePath);
         batch = new SpriteBatch();
         viewport = new FitViewport(Settings.worldWidth, Settings.worldHeight);
+        gameOver = false;
     }
 
     /**
@@ -41,9 +43,12 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        // organize code into three methods
-        player.updatePos();
-        drawScreen();
+        //  Run main game loop if player has not died
+        if (!gameOver){
+            player.updatePos();
+            if (player.hasDied()) gameOver = true;
+            drawScreen();
+        }
     }
 
     private void drawScreen() {
