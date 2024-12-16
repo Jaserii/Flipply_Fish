@@ -25,7 +25,7 @@ public class Main extends ApplicationAdapter {
     //  Game resource filenames
     private String playerTextureFile = "libgdx.png";
 
-    
+
     //  Other game variables
     private float touchCooldown = 0.0f;
     private boolean canControl = true;
@@ -64,7 +64,6 @@ public class Main extends ApplicationAdapter {
 
     private void input() {
         float speed = 15f;
-        float gravity = 7f;
         float delta = Gdx.graphics.getDeltaTime();
 
         //  Let player bounce up if they touched the screen and the cooldown is not in effect
@@ -75,14 +74,9 @@ public class Main extends ApplicationAdapter {
             canControl = false;
         }
         //  Keep bouncing up from the last bounce but with less and less force
-        else if (jumpInertia >= 0.0f) {
+        else {
             jumpInertia -= delta;
             player.translateY(jumpInertia);
-        }
-        //  Let gravity kick in after awhile
-        else {
-            jumpInertia = 0;
-            player.translateY(gravity * delta * (-1));
         }
     }
 
