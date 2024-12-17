@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -28,6 +29,7 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private FitViewport viewport;
     private Player player;
+    private Score score;
     private boolean gameOver;
     private boolean gameStart;
     private Stage stage;
@@ -37,6 +39,7 @@ public class Main extends ApplicationAdapter {
     private Texture background1, background2;
     private float backgroundVelocity;
     private float backgroundX;
+
 
 
     //  Game resource filenames
@@ -134,10 +137,13 @@ public class Main extends ApplicationAdapter {
 
         //  Draw sprites and background within this block
         batch.begin();
+
         batch.draw(background1, backgroundX, 0, Settings.worldWidth, Settings.worldHeight);
         batch.draw(background2, backgroundX + Settings.worldWidth, 0, Settings.worldWidth, Settings.worldHeight);
         player.draw(batch);
         vReef.draw(batch);
+        score.getScoreBitmap().draw(batch, score.getValue(), Settings.worldWidth / 2f - (score.getLength() * 0.25f), Settings.worldHeight - 0.5f);
+
         batch.end();
 
         // Update and draw the stage
@@ -165,6 +171,7 @@ public class Main extends ApplicationAdapter {
         gameOver = false;
         gameStart = false;  //  Becomes true once player taps the screen
         player = new Player(Settings.playerSpriteFilePath);
+        score = new Score(viewport.getWorldHeight() / Gdx.graphics.getHeight() * 8f);
 
         //  Setup infinitely moving background
         backgroundX = 0;
