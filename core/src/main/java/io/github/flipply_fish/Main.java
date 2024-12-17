@@ -20,8 +20,9 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class Main extends ApplicationAdapter {
 
     //  Game Resources
-    private Texture vReefImage;
-    private Sprite vReef;
+    private Texture reefImage;
+    private Sprite[] topReefs;
+    private Sprite[] bottomReefs;
 
 
     private Sound bounce;
@@ -37,6 +38,13 @@ public class Main extends ApplicationAdapter {
     private Texture background1, background2;
     private float backgroundVelocity;
     private float backgroundX;
+
+    private int numReefs = 5;
+    private float reefSpace = 2.5f;
+    private float  reefGap =3f;
+    private float gapShrinkRate = 0.01f;
+    private float minReefGap = 1.5f;
+
 
 
     //  Game resource filenames
@@ -85,9 +93,27 @@ public class Main extends ApplicationAdapter {
 
 
         //  COLLISION branch
-        vReefImage = new Texture(reefImageFile);
-        vReef = new Sprite(vReefImage);
-        vReef.setSize((float)0.5,2);
+        reefImage = new Texture(reefImageFile);
+
+        bottomReefs = new Sprite[numReefs];
+        topReefs = new Sprite[numReefs];
+
+        for (int i=0; i<numReefs;i++){
+            bottomReefs[i]=new Sprite(reefImage);
+            topReefs[i] = new Sprite(reefImage);
+
+
+            bottomReefs[i].setSize(0.5f,2f);
+            topReefs[i].setSize(0.5f,2f);
+
+            topReefs[i].flip(false, true);
+
+            float xPosition = Settings.worldWidth + i * reefSpace;
+            resetReefPair(i, xPosition);
+
+        }
+
+
     }
 
     /**
@@ -119,11 +145,21 @@ public class Main extends ApplicationAdapter {
                 backgroundX = backgroundVelocity = 0;
             }
 
-            vReef.translateX(-reefSpeed * delta);
-            // Check if reef is off-screen
-            if (vReef.getX() + vReef.getWidth() < 0) {
-                resetReef();
+
+
+
+            for (int i = 0; i < numReefs; i++) {
+                // Move reefs to the left
+                bottomReefs[i].translateX(-reefSpeed * delta);
+                topReefs[i].translateX(-reefSpeed * delta);
+
+                // Reset reef pair if it goes off-screen
+                if (bottomReefs[i].getX() + bottomReefs[i].getWidth() < 0) {
+                    float xPosition = bottomReefs[(i + numReefs - 1) % numReefs].getX() + reefSpace;
+                    resetReefPair(i, xPosition);
+                }
             }
+            reefGap = Math.max(minReefGap, reefGap -gapShrinkRate *delta);
         }
     }
 
@@ -137,7 +173,14 @@ public class Main extends ApplicationAdapter {
         batch.draw(background1, backgroundX, 0, Settings.worldWidth, Settings.worldHeight);
         batch.draw(background2, backgroundX + Settings.worldWidth, 0, Settings.worldWidth, Settings.worldHeight);
         player.draw(batch);
-        vReef.draw(batch);
+
+        for(int i=0;i<numReefs;i++){
+
+            bottomReefs[i].draw(batch);
+            topReefs[i].draw(batch);
+        }
+
+
         batch.end();
 
         // Update and draw the stage
@@ -150,13 +193,13 @@ public class Main extends ApplicationAdapter {
         }
     }
 
-    private void resetReef() {
-        // Move reef back to the right side of the screen
-        vReef.setX(reefSpawnX);
+    private void resetReefPair(int index, float xPosition) {
 
-        // Randomize reef's vertical position (optional)
-        reefY = (float) (Math.random() * (Settings.worldHeight - vReef.getHeight()));
-        vReef.setY(reefY);
+        bottomReefs[index].setPosition(xPosition, 0.5f);
+
+        // Randomize top reef position based on the shrinking gap
+        float topReefY = bottomReefs[index].getHeight() + reefGap;
+        topReefs[index].setPosition(xPosition, topReefY);
     }
 
 
