@@ -13,7 +13,7 @@ public class Player {
     private boolean canControl = true;
     private float jumpInertia = 0.0f;
     private boolean hasDied;
-    private Sound bounce;
+    private Sound bounce, collision;
 
     /**
      * When a Player object is created, assign a texture to represent the player
@@ -27,6 +27,7 @@ public class Player {
         player.setX(0.5f);
         hasDied = false;
         bounce = Gdx.audio.newSound(Gdx.files.internal(Settings.bounceSoundFilePath));
+        collision = Gdx.audio.newSound(Gdx.files.internal(Settings.collisionSoundFilePath));
     }
 
     /**
@@ -59,7 +60,7 @@ public class Player {
 
         //  Let player bounce up if they touched the screen and the cooldown is not in effect
         if (Gdx.input.isTouched() && canControl){
-            //bounce.play();
+            bounce.play();
             jumpInertia = speed * delta;
             player.translateY(jumpInertia);
             touchCooldown = 0.25f;  // Start cooldown
@@ -83,6 +84,7 @@ public class Player {
         if (player.getY() < 0.5f) {
             player.setY(0.5f);
             hasDied = true;
+            collision.play();
         }
     }
 

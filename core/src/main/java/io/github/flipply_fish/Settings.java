@@ -8,4 +8,5 @@ public class Settings {
     public static String retryBtnSkinFilePath = "RetryBtn.json";
     public static String backgroundFilePath = "background.png";
     public static String bounceSoundFilePath = "Jump.mp3";
+    public static String collisionSoundFilePath = "collision.mp3";
 }

@@ -24,7 +24,6 @@ public class Main extends ApplicationAdapter {
     private Sprite vReef;
 
 
-    private Sound bounce;
     private SpriteBatch batch;
     private FitViewport viewport;
     private Player player;
@@ -116,7 +115,7 @@ public class Main extends ApplicationAdapter {
                 gameOver = true;
                 gameStart = false;
                 table.add(retryBtn).center().width(3).height(3);
-                backgroundX = backgroundVelocity = 0;
+                backgroundVelocity = 0;
             }
 
             vReef.translateX(-reefSpeed * delta);
