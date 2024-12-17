@@ -1,6 +1,7 @@
 package io.github.flipply_fish;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,6 +13,7 @@ public class Player {
     private boolean canControl = true;
     private float jumpInertia = 0.0f;
     private boolean hasDied;
+    private Sound bounce;
 
     /**
      * When a Player object is created, assign a texture to represent the player
@@ -24,6 +26,7 @@ public class Player {
         player.setY(Settings.worldHeight / 2f); // Sets starting height to middle of screen
         player.setX(0.5f);
         hasDied = false;
+        bounce = Gdx.audio.newSound(Gdx.files.internal(Settings.bounceSoundFilePath));
     }
 
     /**
@@ -51,11 +54,12 @@ public class Player {
      * with the world
      */
     public void updatePos() {
-        float speed = 15f;
+        float speed = 12f;
         float delta = Gdx.graphics.getDeltaTime();
 
         //  Let player bounce up if they touched the screen and the cooldown is not in effect
         if (Gdx.input.isTouched() && canControl){
+            //bounce.play();
             jumpInertia = speed * delta;
             player.translateY(jumpInertia);
             touchCooldown = 0.25f;  // Start cooldown
@@ -76,8 +80,8 @@ public class Player {
             player.setY(Settings.worldHeight - player.getHeight());
             jumpInertia = 0;
         }
-        if (player.getY() < 0) {
-            player.setY(0.0f);
+        if (player.getY() < 0.5f) {
+            player.setY(0.5f);
             hasDied = true;
         }
     }

@@ -7,4 +7,5 @@ public class Settings {
     public static String startBtnSkinFilePath = "StartBtn.json";
     public static String retryBtnSkinFilePath = "RetryBtn.json";
     public static String backgroundFilePath = "background.png";
+    public static String bounceSoundFilePath = "Jump.mp3";
 }
