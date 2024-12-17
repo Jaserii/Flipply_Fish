@@ -27,6 +27,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class Main extends ApplicationAdapter {
 
     //  Game Resources
+    private Texture fishImage;
+    private Texture vReefImage;
+    private Sprite vReef;
+
+  
     private Sound bounce;
     private SpriteBatch batch;
     private FitViewport viewport;
@@ -41,6 +46,16 @@ public class Main extends ApplicationAdapter {
     private Texture background1, background2;
     private float backgroundVelocity;
     private float backgroundX;
+
+
+    //  Game resource filenames
+    private String fishImageFile = "libgdx.png";
+    private String reefImageFile = "rectangle.png";
+    private float reefIntertia =0.0f;
+    private float reefSpeed = 2f;      // Speed of the reef moving left
+    private float reefSpawnX = worldWidth;  // Starting X position of the reef (off-screen)
+    private float reefY = 2f;          // Y position of the reef (can be randomized)
+
 
 
     @Override
@@ -79,6 +94,14 @@ public class Main extends ApplicationAdapter {
         background1 = new Texture(Settings.backgroundFilePath);
         background2 = new Texture(Settings.backgroundFilePath);
 
+  
+        //  COLLISION branch
+        fishImage = new Texture(fishImageFile);
+        vReefImage = new Texture(reefImageFile);
+        player = new Sprite(fishImage);
+        vReef = new Sprite(vReefImage);
+        vReef.setSize((float)0.5,2);
+        player.setSize(1,1);
     }
 
     /**
@@ -94,7 +117,7 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
-        //  Wait for player input before starting
+      //  Wait for player input before starting
         drawScreen();
         gameStart = player.startGame(gameStart);
 
@@ -107,8 +130,61 @@ public class Main extends ApplicationAdapter {
                 table.add(retryBtn).center().width(3).height(3);
                 backgroundX = backgroundVelocity = 0;
             }
+          
+         vReef.translateX(-reefSpeed * delta);
+
+        // Check if reef is off-screen
+        if (vReef.getX() + vReef.getWidth() < 0) {
+            resetReef();
         }
     }
+      
+
+  /*
+    private void input() {
+        float speed = 15f;
+        float gravity = 7f;
+        float delta = Gdx.graphics.getDeltaTime();
+
+        //  Let player bounce up if they touched the screen and the cooldown is not in effect
+        if (Gdx.input.justTouched() && canControl){
+            jumpInertia = speed * delta;
+            player.translateY(jumpInertia);
+            touchCooldown = 0.25f;  // Start cooldown
+            canControl = false;
+        }
+        //  Keep bouncing up from the last bounce but with less and less force
+        else if (jumpInertia >= 0.0f) {
+            jumpInertia -= delta;
+            player.translateY(jumpInertia);
+        }
+        //  Let gravity kick in after awhile
+        else {
+            jumpInertia = 0;
+            player.translateY(gravity * delta * (-1));
+        }
+    }
+    
+  
+    private void logic() {
+        float delta = Gdx.graphics.getDeltaTime();
+
+        //  Add delay in tapping so the player doesn't just immediately fly upwards
+        touchCooldown -= delta;
+        if (touchCooldown <= 0) canControl = true;
+
+        //  Handle collision with "ceiling" and floor
+        if (player.getY() +player.getHeight() > worldHeight) {
+            player.setY(worldHeight-player.getHeight());
+            jumpInertia = 0;
+        }
+
+        if (player.getY() < 0) {
+            player.setY(0.0f);
+        }
+    }
+    */
+ 
 
     private void drawScreen() {
         ScreenUtils.clear(Color.BLACK);
@@ -120,8 +196,9 @@ public class Main extends ApplicationAdapter {
         batch.draw(background1, backgroundX, 0, Settings.worldWidth, Settings.worldHeight);
         batch.draw(background2, backgroundX + Settings.worldWidth, 0, Settings.worldWidth, Settings.worldHeight);
         player.draw(batch);
+        vReef.draw(batch);
         batch.end();
-
+      
         // Update and draw the stage
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
@@ -132,6 +209,16 @@ public class Main extends ApplicationAdapter {
         }
     }
 
+    private void resetReef() {
+        // Move reef back to the right side of the screen
+        vReef.setX(reefSpawnX);
+
+        // Randomize reef's vertical position (optional)
+        reefY = (float) (Math.random() * (worldHeight - vReef.getHeight()));
+        vReef.setY(reefY);
+    }
+        
+    
     private void resetGame() {
         table.add(startBtn).center().width(3).height(3);
         gameOver = false;
