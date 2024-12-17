@@ -116,7 +116,7 @@ public class Main extends ApplicationAdapter {
                 gameOver = true;
                 gameStart = false;
                 table.add(retryBtn).center().width(3).height(3);
-                backgroundX = backgroundVelocity = 0;
+                backgroundVelocity = 0;
             }
 
             vReef.translateX(-reefSpeed * delta);

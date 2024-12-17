@@ -76,8 +76,8 @@ public class Player {
             player.setY(Settings.worldHeight - player.getHeight());
             jumpInertia = 0;
         }
-        if (player.getY() < 0) {
-            player.setY(0.0f);
+        if (player.getY() < 0.5f) {
+            player.setY(0.5f);
             hasDied = true;
         }
     }
