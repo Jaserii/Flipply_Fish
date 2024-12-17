@@ -15,6 +15,10 @@ public class Score {
         font.getData().setScale(scale);
     }
 
+    public void increment() {
+        score++;
+    }
+
     public BitmapFont getScoreBitmap() {
         return font;
     }
