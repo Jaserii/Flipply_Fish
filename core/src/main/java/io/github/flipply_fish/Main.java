@@ -15,28 +15,47 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 public class Main extends ApplicationAdapter {
 
     //  Game Resources
-    private Texture playerTexture;
+    private Texture fishImage;
+    private Texture vReefImage;
+
     private Sprite player;
+    private Sprite vReef;
+
     private Sound bounce;
+
     private SpriteBatch batch;
     private FitViewport viewport;
 
 
-    //  Game resource filenames
-    private String playerTextureFile = "libgdx.png";
 
-    
+
+
+
+    //  Game resource filenames
+    private String fishImageFile = "libgdx.png";
+    private String reefImageFile = "rectangle.png";
+
+
     //  Other game variables
     private float touchCooldown = 0.0f;
     private boolean canControl = true;
     private float jumpInertia = 0.0f;
+    private float reefIntertia =0.0f;
     private int worldWidth = 3;
     private int worldHeight = 6;
 
+    private float reefSpeed = 2f;      // Speed of the reef moving left
+    private float reefSpawnX = worldWidth;  // Starting X position of the reef (off-screen)
+    private float reefY = 2f;          // Y position of the reef (can be randomized)
+
+
     @Override
     public void create() {
-        playerTexture = new Texture(playerTextureFile);
-        player = new Sprite(playerTexture);
+        fishImage = new Texture(fishImageFile);
+        vReefImage = new Texture(reefImageFile);
+        player = new Sprite(fishImage);
+        vReef = new Sprite(vReefImage);
+        vReef.setSize((float)0.5,2);
         player.setSize(1,1);
 
         batch = new SpriteBatch();
@@ -68,7 +87,7 @@ public class Main extends ApplicationAdapter {
         float delta = Gdx.graphics.getDeltaTime();
 
         //  Let player bounce up if they touched the screen and the cooldown is not in effect
-        if (Gdx.input.isTouched() && canControl){
+        if (Gdx.input.justTouched() && canControl){
             jumpInertia = speed * delta;
             player.translateY(jumpInertia);
             touchCooldown = 0.25f;  // Start cooldown
@@ -94,12 +113,20 @@ public class Main extends ApplicationAdapter {
         if (touchCooldown <= 0) canControl = true;
 
         //  Handle collision with "ceiling" and floor
-        if (player.getY() > worldHeight) {
-            player.setY(worldHeight-1);
+        if (player.getY() +player.getHeight() > worldHeight) {
+            player.setY(worldHeight-player.getHeight());
             jumpInertia = 0;
         }
+
         if (player.getY() < 0) {
             player.setY(0.0f);
+        }
+
+        vReef.translateX(-reefSpeed * delta);
+
+        // Check if reef is off-screen
+        if (vReef.getX() + vReef.getWidth() < 0) {
+            resetReef();
         }
     }
 
@@ -111,8 +138,19 @@ public class Main extends ApplicationAdapter {
         //  Draw sprites within this block
         batch.begin();
         player.draw(batch);
+        vReef.draw(batch);
         batch.end();
     }
+
+    private void resetReef() {
+        // Move reef back to the right side of the screen
+        vReef.setX(reefSpawnX);
+
+        // Randomize reef's vertical position (optional)
+        reefY = (float) (Math.random() * (worldHeight - vReef.getHeight()));
+        vReef.setY(reefY);
+    }
+
 
     /*
     private SpriteBatch batch;
