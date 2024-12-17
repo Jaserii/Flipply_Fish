@@ -51,11 +51,11 @@ public class Player {
      * with the world
      */
     public void updatePos() {
-        float speed = 15f;
+        float speed = 12f;
         float delta = Gdx.graphics.getDeltaTime();
 
         //  Let player bounce up if they touched the screen and the cooldown is not in effect
-        if (Gdx.input.isTouched() && canControl){
+        if (Gdx.input.justTouched() && canControl){
             jumpInertia = speed * delta;
             player.translateY(jumpInertia);
             touchCooldown = 0.25f;  // Start cooldown
@@ -76,8 +76,8 @@ public class Player {
             player.setY(Settings.worldHeight - player.getHeight());
             jumpInertia = 0;
         }
-        if (player.getY() < 0) {
-            player.setY(0.0f);
+        if (player.getY() < 0.5) {
+            player.setY(0.5f);
             hasDied = true;
         }
     }
