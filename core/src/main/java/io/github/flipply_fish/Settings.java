@@ -7,5 +7,5 @@ public class Settings {
     public static String startBtnSkinFilePath = "StartBtn.json";
     public static String retryBtnSkinFilePath = "RetryBtn.json";
     public static String backgroundFilePath = "background.png";
-    public static String scoreFontFilePath = "pixelletters-font/Pixelletters-RLm3.ttf";
+    public static String scoreFontFilePath = "pixelletters-font/Pixellettersfull-BnJ5.ttf";
 }
