@@ -6,6 +6,7 @@ import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -38,6 +39,8 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private FitViewport viewport;
     private Player player;
+    private Score scoreBoard;
+
     private boolean gameOver;
     private boolean gameStart;
     private Stage stage;
@@ -167,8 +170,6 @@ public class Main extends ApplicationAdapter {
         drawScreen();
         gameStart = player.startGame(gameStart);
 
-
-
         //  Run main game loop if player has not died and player started the game
         if (!gameOver && gameStart) {
             player.updatePos();
@@ -235,6 +236,9 @@ public class Main extends ApplicationAdapter {
         }
 
 
+
+        scoreBoard.getScoreBitmap().draw(batch, score.getValue(), Settings.worldWidth / 2f - (score.getLength() * 0.25f), Settings.worldHeight - 0.5f);
+
         batch.end();
 
         // Update and draw the stage
@@ -265,6 +269,8 @@ public class Main extends ApplicationAdapter {
         score=0;
 
 
+
+
         // Reset reefs
         for (int i = 0; i < numReefs; i++) {
             float xPosition = Settings.worldWidth + i * reefSpace; // Calculate initial X position
@@ -272,6 +278,10 @@ public class Main extends ApplicationAdapter {
         }
 
         reefGap=3f;
+
+        // On 480x800 screen, we used "viewport.getWorldHeight() / Gdx.graphics.getHeight()"
+        // which gave us a value of "0.0075" for the scale
+        scoreBoard = new Score(0.0075f * 8f);
 
         //  Setup infinitely moving background
         backgroundX = 0;
