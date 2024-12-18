@@ -262,6 +262,8 @@ public class Main extends ApplicationAdapter {
         gameOver = false;
         gameStart = false;  //  Becomes true once player taps the screen
         player = new Player(Settings.playerSpriteFilePath);
+        score=0;
+
 
         // Reset reefs
         for (int i = 0; i < numReefs; i++) {
