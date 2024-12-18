@@ -310,6 +310,7 @@ public class Main extends ApplicationAdapter {
 
     public void increaseScore(){
         score++;
+        scoreBoard.increment();
 
         if (score > highScore) {
             highScore = score; // Update high score
