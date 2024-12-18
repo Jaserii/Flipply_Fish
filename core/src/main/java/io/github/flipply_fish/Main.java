@@ -237,7 +237,7 @@ public class Main extends ApplicationAdapter {
 
 
 
-        scoreBoard.getScoreBitmap().draw(batch, score.getValue(), Settings.worldWidth / 2f - (score.getLength() * 0.25f), Settings.worldHeight - 0.5f);
+        scoreBoard.getScoreBitmap().draw(batch, scoreBoard.getValue(), Settings.worldWidth / 2f - (scoreBoard.getLength() * 0.25f), Settings.worldHeight - 0.5f);
 
         batch.end();
 
