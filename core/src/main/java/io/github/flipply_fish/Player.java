@@ -51,7 +51,7 @@ public class Player {
      * with the world
      */
     public void updatePos() {
-        float speed = 15f;
+        float speed = 11f;
         float delta = Gdx.graphics.getDeltaTime();
 
         //  Let player bounce up if they touched the screen and the cooldown is not in effect
@@ -63,7 +63,7 @@ public class Player {
         }
         //  Keep bouncing up from the last bounce but with less and less force
         else {
-            jumpInertia -= delta;
+            jumpInertia -= (delta / 1.25f);
             player.translateY(jumpInertia);
         }
 
