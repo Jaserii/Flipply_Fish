@@ -171,7 +171,10 @@ public class Main extends ApplicationAdapter {
         gameOver = false;
         gameStart = false;  //  Becomes true once player taps the screen
         player = new Player(Settings.playerSpriteFilePath);
-        score = new Score(viewport.getWorldHeight() / Gdx.graphics.getHeight() * 8f);
+
+        // On 480x800 screen, we used "viewport.getWorldHeight() / Gdx.graphics.getHeight()"
+        // which gave us a value of "0.0075" for the scale
+        score = new Score(0.0075f * 8f);
 
         //  Setup infinitely moving background
         backgroundX = 0;
