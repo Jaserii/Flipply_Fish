@@ -201,6 +201,7 @@ public class Main extends ApplicationAdapter {
                 // Check if player has passed the reef pair
                 if (!passedReefs[i] && player.getX() > bottomReefs[i].getX() + bottomReefs[i].getWidth()) {
                     passedReefs[i] = true; // Mark this reef pair as passed
+                    System.out.println("Passed Reef " + i + " Score: " + score);  // Debugging output
                     increaseScore();      // Call your score-increasing method
                 }
 
@@ -208,6 +209,8 @@ public class Main extends ApplicationAdapter {
                 if (bottomReefs[i].getX() + bottomReefs[i].getWidth() < 0) {
                     float xPosition = bottomReefs[(i + numReefs - 1) % numReefs].getX() + reefSpace;
                     resetReefPair(i, xPosition);
+
+                    passedReefs[i] = false;
                 }
             }
             reefGap = Math.max(minReefGap, reefGap -gapShrinkRate *delta);
@@ -265,6 +268,8 @@ public class Main extends ApplicationAdapter {
             float xPosition = Settings.worldWidth + i * reefSpace; // Calculate initial X position
             resetReefPair(i, xPosition); // Position the reef at the start
         }
+
+        reefGap=3f;
 
         //  Setup infinitely moving background
         backgroundX = 0;
