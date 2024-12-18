@@ -4,6 +4,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
+
+
 
 public class Player {
     private Texture playerTexture;
@@ -12,6 +15,7 @@ public class Player {
     private boolean canControl = true;
     private float jumpInertia = 0.0f;
     private boolean hasDied;
+    private Rectangle collisionRectangle;
 
     /**
      * When a Player object is created, assign a texture to represent the player
@@ -24,6 +28,8 @@ public class Player {
         player.setY(Settings.worldHeight / 2f); // Sets starting height to middle of screen
         player.setX(0.5f);
         hasDied = false;
+        collisionRectangle = new Rectangle((int)player.getX(),(int)player.getY(),(int) player.getWidth(),(int) player.getHeight());
+
     }
 
     /**
@@ -51,7 +57,7 @@ public class Player {
      * with the world
      */
     public void updatePos() {
-        float speed = 12f;
+        float speed = 10f;
         float delta = Gdx.graphics.getDeltaTime();
 
         //  Let player bounce up if they touched the screen and the cooldown is not in effect
@@ -63,7 +69,7 @@ public class Player {
         }
         //  Keep bouncing up from the last bounce but with less and less force
         else {
-            jumpInertia -= delta;
+            jumpInertia -= (delta/1.25);
             player.translateY(jumpInertia);
         }
 
@@ -80,6 +86,9 @@ public class Player {
             player.setY(0.5f);
             hasDied = true;
         }
+
+        collisionRectangle.set(player.getX(), player.getY(), player.getWidth(), player.getHeight());
+
     }
 
     /**
@@ -89,4 +98,25 @@ public class Player {
     public boolean hasDied(){
         return hasDied;
     }
+
+    public Rectangle getCollisionRectangle() {
+        return collisionRectangle;
+    }
+
+    public float getX() {
+        return player.getX();
+    }
+
+    public float getY() {
+        return player.getY();
+    }
+
+    public float getWidth() {
+        return player.getWidth();
+    }
+
+    public float getHeight() {
+        return player.getHeight();
+    }
+
 }
