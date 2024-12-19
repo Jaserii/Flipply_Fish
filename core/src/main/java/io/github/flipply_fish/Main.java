@@ -227,7 +227,9 @@ public class Main extends ApplicationAdapter {
         }
         player.draw(batch);
         scoreBoard.getScoreBitmap().draw(batch, scoreBoard.getValue(), Settings.worldWidth / 2f - (scoreBoard.getLength() * 0.25f), Settings.worldHeight - 0.5f);
-
+        if (gameOver){
+            scoreBoard.getHighScoreBitmap().draw(batch, String.valueOf(highScore), Settings.worldWidth / 2f - ((String.valueOf(highScore)).length() * 0.25f), Settings.worldHeight - 1.25f);
+        }
         batch.end();
 
         // Update and draw the stage

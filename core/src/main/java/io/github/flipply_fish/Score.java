@@ -7,7 +7,8 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 
 public class Score {
-    private BitmapFont font;
+    private BitmapFont currentScoreFont;
+    private BitmapFont highScoreFont;
     private int score;
 
     public Score(float scale) {
@@ -19,10 +20,14 @@ public class Score {
         parameter.size = 20; // Set the font size in pixels
         parameter.color = com.badlogic.gdx.graphics.Color.WHITE; // Set font color
 
-        font = generator.generateFont(parameter);
-        font.setUseIntegerPositions(false);
-        font.getData().setScale(scale);
+        currentScoreFont = generator.generateFont(parameter);
+        currentScoreFont.setUseIntegerPositions(false);
+        currentScoreFont.getData().setScale(scale);
 
+        parameter.color = com.badlogic.gdx.graphics.Color.GRAY;
+        highScoreFont = generator.generateFont(parameter);
+        highScoreFont.setUseIntegerPositions(false);
+        highScoreFont.getData().setScale(scale);
         generator.dispose();
     }
 
@@ -31,9 +36,10 @@ public class Score {
     }
 
     public BitmapFont getScoreBitmap() {
-        return font;
+        return currentScoreFont;
     }
 
+    public BitmapFont getHighScoreBitmap() { return highScoreFont; }
     public String getValue(){
         return String.valueOf(score);
     }
