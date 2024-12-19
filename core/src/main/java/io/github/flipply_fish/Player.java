@@ -73,7 +73,7 @@ public class Player {
         }
         //  Keep bouncing up from the last bounce but with less and less force
         else {
-            jumpInertia -= (delta/1.25);
+            jumpInertia -= (delta/1.25f);
             player.translateY(jumpInertia);
         }
 
@@ -88,8 +88,9 @@ public class Player {
         }
         if (player.getY() < 0.5f) {
             player.setY(0.5f);
-            hasDied = true;
-            collision.play();
+            if (!hasDied) {
+                this.setDeath();  //Only play once
+            }
         }
 
         collisionRectangle.set(player.getX(), player.getY(), player.getWidth(), player.getHeight());
@@ -102,6 +103,11 @@ public class Player {
      */
     public boolean hasDied(){
         return hasDied;
+    }
+
+    public void setDeath(){
+        hasDied = true;
+        collision.play();
     }
 
     public Rectangle getCollisionRectangle() {

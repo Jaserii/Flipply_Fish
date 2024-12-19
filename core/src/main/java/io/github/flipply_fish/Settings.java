@@ -10,4 +10,5 @@ public class Settings {
     public static String bounceSoundFilePath = "Jump.mp3";
     public static String collisionSoundFilePath = "collision.mp3";
     public static String scoreFontFilePath = "pixelletters-font/Pixellettersfull-BnJ5.ttf";
+    public static String pointUpSoundFilePath = "PointUp.mp3";
 }

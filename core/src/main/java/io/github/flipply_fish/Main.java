@@ -49,6 +49,7 @@ public class Main extends ApplicationAdapter {
     private Texture background1, background2;
     private float backgroundVelocity;
     private float backgroundX;
+    private Sound pointUp;
 
     private int numReefs = 5;
     private float reefSpace = 2.5f;
@@ -69,14 +70,11 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         passedReefs = new boolean[numReefs];
-
-
         prefs = Gdx.app.getPreferences("GamePrefs");
 
         // Load high score
         highScore = prefs.getInteger("highScore", 0);  // Default to 0 if no high score is saved
         System.out.println("Loaded High Score: " + highScore);  // For debugging
-
 
         batch = new SpriteBatch();
         viewport = new FitViewport(Settings.worldWidth, Settings.worldHeight);
@@ -144,10 +142,9 @@ public class Main extends ApplicationAdapter {
 
             float xPosition = Settings.worldWidth + i * reefSpace;
             resetReefPair(i, xPosition);
-
         }
 
-
+        pointUp = Gdx.audio.newSound(Gdx.files.internal(Settings.pointUpSoundFilePath));
     }
 
     /**
@@ -175,23 +172,16 @@ public class Main extends ApplicationAdapter {
 
             for(int i=0; i<numReefs;i++){
                 if(checkCollision(player,bottomReefs[i] )|| checkCollision(player,topReefs[i])){
-                    gameOver=true;
-                    gameStart=false;
-                    table.add(retryBtn).center().width(3).height(3); // Show retry button
-                    backgroundX = backgroundVelocity = 0;
-
+                    player.setDeath();
                 }
-
             }
+
             if (player.hasDied()) {
                 gameOver = true;
                 gameStart = false;
                 table.add(retryBtn).center().width(3).height(3);
                 backgroundVelocity = 0;
             }
-
-
-
 
             for (int i = 0; i < numReefs; i++) {
                 // Move reefs to the left
@@ -215,6 +205,10 @@ public class Main extends ApplicationAdapter {
             }
             reefGap = Math.max(minReefGap, reefGap -gapShrinkRate *delta);
         }
+        //  Let the player fall down
+        else if (gameOver && !gameStart) {
+            player.updatePos();
+        }
     }
 
     private void drawScreen() {
@@ -224,18 +218,14 @@ public class Main extends ApplicationAdapter {
 
         //  Draw sprites and background within this block
         batch.begin();
+
         batch.draw(background1, backgroundX, 0, Settings.worldWidth, Settings.worldHeight);
         batch.draw(background2, backgroundX + Settings.worldWidth, 0, Settings.worldWidth, Settings.worldHeight);
-        player.draw(batch);
-
         for(int i=0;i<numReefs;i++){
-
             bottomReefs[i].draw(batch);
             topReefs[i].draw(batch);
         }
-
-
-
+        player.draw(batch);
         scoreBoard.getScoreBitmap().draw(batch, scoreBoard.getValue(), Settings.worldWidth / 2f - (scoreBoard.getLength() * 0.25f), Settings.worldHeight - 0.5f);
 
         batch.end();
@@ -308,6 +298,7 @@ public class Main extends ApplicationAdapter {
     }
 
     public void increaseScore(){
+        pointUp.play();
         score++;
         scoreBoard.increment();
 
