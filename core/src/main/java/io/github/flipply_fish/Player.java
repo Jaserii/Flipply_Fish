@@ -1,6 +1,7 @@
 package io.github.flipply_fish;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,6 +16,7 @@ public class Player {
     private boolean canControl = true;
     private float jumpInertia = 0.0f;
     private boolean hasDied;
+    private Sound bounce, collision;
     private Rectangle collisionRectangle;
 
     /**
@@ -28,8 +30,9 @@ public class Player {
         player.setY(Settings.worldHeight / 2f); // Sets starting height to middle of screen
         player.setX(0.5f);
         hasDied = false;
+        bounce = Gdx.audio.newSound(Gdx.files.internal(Settings.bounceSoundFilePath));
+        collision = Gdx.audio.newSound(Gdx.files.internal(Settings.collisionSoundFilePath));
         collisionRectangle = new Rectangle((int)player.getX(),(int)player.getY(),(int) player.getWidth(),(int) player.getHeight());
-
     }
 
     /**
@@ -62,6 +65,7 @@ public class Player {
 
         //  Let player bounce up if they touched the screen and the cooldown is not in effect
         if (Gdx.input.justTouched() && canControl){
+            bounce.play();
             jumpInertia = speed * delta;
             player.translateY(jumpInertia);
             touchCooldown = 0.25f;  // Start cooldown
@@ -82,9 +86,10 @@ public class Player {
             player.setY(Settings.worldHeight - player.getHeight());
             jumpInertia = 0;
         }
-        if (player.getY() < 0.5) {
+        if (player.getY() < 0.5f) {
             player.setY(0.5f);
             hasDied = true;
+            collision.play();
         }
 
         collisionRectangle.set(player.getX(), player.getY(), player.getWidth(), player.getHeight());

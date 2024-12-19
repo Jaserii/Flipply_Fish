@@ -35,7 +35,6 @@ public class Main extends ApplicationAdapter {
 
 
 
-    private Sound bounce;
     private SpriteBatch batch;
     private FitViewport viewport;
     private Player player;
